@@ -12,26 +12,6 @@ type WorkerPool struct {
 	Done         chan struct{}
 }
 
-func worker(ctx context.Context, wg *sync.WaitGroup, jobStream <-chan Job, resultStream chan<- Result) {
-	defer wg.Done()
-
-	for {
-		select {
-		case job, ok := <-jobStream:
-			if !ok {
-				return
-			}
-
-			resultStream <- job.execute(ctx)
-		case <-ctx.Done():
-			resultStream <- Result{
-				Err: ctx.Err(),
-			}
-			return
-		}
-	}
-}
-
 func New(wc int) WorkerPool {
 	return WorkerPool{
 		WorkerCount:  wc,
@@ -65,4 +45,24 @@ func (wp WorkerPool) GenerateJobBulk(jobBulk []Job) {
 	}
 
 	close(wp.JobStream)
+}
+
+func worker(ctx context.Context, wg *sync.WaitGroup, jobStream <-chan Job, resultStream chan<- Result) {
+	defer wg.Done()
+
+	for {
+		select {
+		case job, ok := <-jobStream:
+			if !ok {
+				return
+			}
+
+			resultStream <- job.execute(ctx)
+		case <-ctx.Done():
+			resultStream <- Result{
+				Err: ctx.Err(),
+			}
+			return
+		}
+	}
 }
