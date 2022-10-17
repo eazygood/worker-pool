@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	// define workers
+	// define worker counts if needed
 	workerCount = 15
 )
 
