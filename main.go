@@ -18,7 +18,7 @@ const (
 	workerCount = 15
 )
 
-func getDomain() ([][]string, error) {
+func getDomains() ([][]string, error) {
 	f, err := os.Open("top-1m.csv")
 	if err != nil {
 		log.Fatal(err)
@@ -63,7 +63,7 @@ func main() {
 		}, nil
 	}
 
-	domains, err := getDomain()
+	domains, err := getDomains()
 
 	if err != nil {
 		log.Fatal(err)
